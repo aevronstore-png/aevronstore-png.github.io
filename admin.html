@@ -154,7 +154,8 @@ function imgToBase64(file){return new Promise((res,rej)=>{const im=new Image();i
 async function run(label,fn){
   if(busy)return; busy=true; document.querySelectorAll('button').forEach(b=>b.disabled=true);
   try{status(label+'...','info'); await fn(); status('تم النشر. التغيير يظهر في المتجر خلال دقيقة تقريباً.','ok')}
-  catch(e){ if(e.status===401){status('المفتاح غير صالح أو منتهي. سجّلي خروج وأدخلي مفتاح جديد.','err')} else if(e.status===409){status('صار تعديل من مكان ثاني. حمّلت آخر نسخة، أعيدي المحاولة.','err');await load().catch(()=>{})} else status('تعذّر الحفظ: '+e.message,'err') }
+  catch(e){ if(e.status===401){status('المفتاح غير صالح أو منتهي. سجّلي خروج وأدخلي مفتاح جديد.','err')} else if(e.status===409){status('صار تعديل من مكان ثاني. حمّلت آخر نسخة، أعيدي المحاولة.','err')} else if(e.status===403||e.status===404){status('لم يُحفظ شيء: المفتاح ما عنده صلاحية كتابة على المتجر. لازم يكون المفتاح مسوّى من حساب aevronstore-png، وContents على Read and write. اضغطي «تسجيل خروج» وأدخلي المفتاح الصحيح.','err')} else status('لم يُحفظ شيء: '+e.message,'err');
+    const msg=$('status').textContent,cls=$('status').className; await load().catch(()=>{}); $('status').hidden=false;$('status').className=cls;$('status').textContent=msg }
   finally{busy=false; document.querySelectorAll('button').forEach(b=>b.disabled=false); render()}
 }
 
